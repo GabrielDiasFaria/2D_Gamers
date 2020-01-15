@@ -3,6 +3,7 @@
 
 // ctrl+c => desliga servidor
 // npx nodemon => nodemon deixa o server com hotReload
+// npm install nodemon
 // npx serve => servidor temporário para rodar projeto
 // nvm install node => Instala versão mais nova para os imports
 
