@@ -6,25 +6,29 @@
     
         <style>
             #screen{
-                border: 5px solid #CCC;
+                
                 image-rendering: pixelated;
                 image-rendering: crisp-edges;
                 image-rendering: -moz-crisp-edges;
                 width: 550px;
                 height: 550px; 
-                position:fixed;
                 left:30%;
                 top:10;
             }
         </style>
         <script src="/socket.io/socket.io.js"></script>
+        <link href="dist/rpgui.css" rel="stylesheet" type="text/css" >
+	    <script src="dist/rpgui.js"></script>
     </head>
 
     <body>
-        <canvas id="screen" width="21" height="21" align="center">
-        </canvas>
+        <div class="rpgui-content">
+            <canvas class="rpgui-container framed rpgui-draggable" id="screen" width="21" height="21" align="center">
+            </canvas>
+        </div>
 
         <script type="module">
+            // border: 5px solid #CCC;
             import createGame from './createGame.js';
             import createKeyboardListener from './keyboardListener.js';         
             import renderScreen from './renderScreen.js';      
