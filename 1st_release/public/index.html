@@ -6,19 +6,22 @@
     
         <style>
             #screen{
-                border: 10px solid #CCC;
+                border: 5px solid #CCC;
                 image-rendering: pixelated;
                 image-rendering: crisp-edges;
                 image-rendering: -moz-crisp-edges;
-                width: 400px;
-                height: 400px; 
+                width: 550px;
+                height: 550px; 
+                position:fixed;
+                left:30%;
+                top:10;
             }
         </style>
         <script src="/socket.io/socket.io.js"></script>
     </head>
 
     <body>
-        <canvas id="screen" width="10" height="10">
+        <canvas id="screen" width="21" height="21" align="center">
         </canvas>
 
         <script type="module">

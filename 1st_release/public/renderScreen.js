@@ -2,7 +2,7 @@ export default function renderScreen(screen, game, requestAnimationFrame, curren
 
     const context = screen.getContext("2d"); // Contexto da Tela
     context.fillStyle = 'white';
-    context.clearRect(0,0,10,10);    
+    context.clearRect(0,0,21,21);    
 
     for(const playerId in game.state.players){
         const player = game.state.players[playerId];
