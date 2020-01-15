@@ -31,13 +31,8 @@
 
             const screen = document.getElementById("screen"); // Elemento da Tela
             const context = screen.getContext("2d"); // Contexto da Tela
-            //const currentPlayerId = "player1";
-                        
-            game.addPlayer({ playerId: "player1", playerX: 1, playerY: 2, playerColor: "black" });
-            game.addPlayer({ playerId: "player2", playerX: 1, playerY: 4, playerColor: "black"  });
-
-            game.addFruit({ fruitId: "fruit1", fruitX: 4, fruitY: 3, fruitColor: 'green' });
-
+            //const currentPlayerId = "player1";           
+            
             renderScreen(screen, game, requestAnimationFrame);
 
         </script>
