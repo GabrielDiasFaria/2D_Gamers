@@ -4,6 +4,7 @@
 // ctrl+c => desliga servidor
 // npx nodemon => nodemon deixa o server com hotReload
 // npx serve => servidor temporário para rodar projeto
+// nvm install node => Instala versão mais nova para os imports
 
 import express from 'express'
 import http from 'http'
@@ -32,6 +33,13 @@ sockets.on('connection', (socket) => {
     socket.on('disconnect', () => {
         game.removePlayer({ playerId: playerId })
         console.log(`Jogador desconectado: ${playerId}`)
+    })
+
+    socket.on('move-player', (command) => {
+        command.playerId = playerId
+        command.type = 'move-player'
+        
+        game.movePlayer(command)
     })
 
     socket.emit('setup', game.state)

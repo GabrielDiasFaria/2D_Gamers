@@ -22,7 +22,7 @@ export default function createGame(){
         }
     }
 
-    function setState(newState){
+    function setState(newState) {
         Object.assign(state, newState)
     }
 
@@ -50,6 +50,11 @@ export default function createGame(){
     function removePlayer(command){
         const playerId = command.playerId;
         delete state.players[playerId];
+
+        notifyAll({
+            type: 'remove-player',
+            playerId: playerId,
+        })
     }
 
     function addFruit(command){
@@ -70,6 +75,7 @@ export default function createGame(){
     }
 
     function movePlayer(command){
+        notifyAll(command)
 
         const acceptedMoves = {
             ArrowUp(player){if(player.y - 1 >= 0) return player.y--;},
@@ -102,5 +108,5 @@ export default function createGame(){
         //}
     }
 
-    return {addPlayer, removePlayer, addFruit, removeFruit, movePlayer, state, subscribe}
+    return {addPlayer, removePlayer, addFruit, removeFruit, movePlayer, state, subscribe, setState, notifyAll}
 }
