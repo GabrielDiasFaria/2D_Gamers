@@ -1,2 +1,4 @@
 # 2D_Gamers
-Jogos 2D
+Motor MMO para jogos.
+
+Criado com o intuito de utilizar NodeJs e Socket.Io para montar um motor de MMO.
