@@ -11,9 +11,10 @@
                 image-rendering: crisp-edges;
                 image-rendering: -moz-crisp-edges;
                 width: 400px;
-                height: 400px;
+                height: 400px; 
             }
         </style>
+        <script src="/socket.io/socket.io.js"></script>
     </head>
 
     <body>
@@ -31,9 +32,15 @@
 
             const screen = document.getElementById("screen"); // Elemento da Tela
             const context = screen.getContext("2d"); // Contexto da Tela
-            //const currentPlayerId = "player1";           
-            
+            //const currentPlayerId = "player1";   
             renderScreen(screen, game, requestAnimationFrame);
+
+            const socket = io()
+
+            socket.on('connect', () => {
+                const playerId = socket.id
+                console.log(`Player connected ${playerId}`)
+            })
 
         </script>
     </body>

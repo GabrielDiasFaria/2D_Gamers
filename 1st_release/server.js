@@ -8,9 +8,11 @@
 import express from 'express'
 import http from 'http'
 import createGame from './public/createGame.js'
+import socketio from 'socket.io'
 
-const app = express()
-const server = http.createServer(app)
+const app     = express()
+const server  = http.createServer(app)
+const sockets = socketio(server)
 
 app.use(express.static('public'))
 
@@ -20,6 +22,11 @@ game.addPlayer({ playerId: "player1", playerX: 1, playerY: 2, playerColor: "blac
 game.addPlayer({ playerId: "player2", playerX: 1, playerY: 4, playerColor: "black"  });
 
 game.addFruit({ fruitId: "fruit1", fruitX: 4, fruitY: 3, fruitColor: 'green' });
+
+sockets.on('connection', (socket) => {
+    const playerId = socket.id
+    console.log(`Jogador conectado: ${playerId}`)
+})
 
 server.listen(3000, () => {
     console.log("Servidor iniciado, porta: 3000")
