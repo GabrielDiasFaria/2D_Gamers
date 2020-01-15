@@ -37,9 +37,18 @@
 
             const socket = io()
 
-            socket.on('connect', () => {
-                const playerId = socket.id
-                console.log(`Player connected ${playerId}`)
+            socket.on('connect', () => { // Recebe a conexão com o servidor
+                const playerId = socket.id;
+                console.log(`Player connected ${playerId}`);
+            })
+
+            socket.on('add-player', (command) => { // Recebe a conexão com o servidor
+                console.log(`Adicionando...${command.type}`)
+                game.addPlayer(command)
+            })
+
+            socket.on('setup', (state) => { // Recebe a state do servidor
+                game.state = state;
             })
 
         </script>
