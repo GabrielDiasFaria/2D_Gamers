@@ -10,13 +10,13 @@ Criado com o intuito de utilizar NodeJs e Socket.Io para montar um motor de MMO.
  
  Public
  > createGame
-  > Módulo responsável por controlar regras do jogo
+  -> Módulo responsável por controlar regras do jogo
  
  > keyboardListener
-  > Módilo responsável por controlar os inputs do usuáro
+  -> Módilo responsável por controlar os inputs do usuáro
   
  > renderScreen
-  > Responsável por renderizar a tela dos players
+  -> Responsável por renderizar a tela dos players
   
  > index.html
-  > Controla a comunicação com o Socket do servidor para renderizar enviando e recebendo eventos
+  -> Controla a comunicação com o Socket do servidor para renderizar enviando e recebendo eventos
