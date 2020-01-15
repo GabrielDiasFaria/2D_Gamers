@@ -1,0 +1,22 @@
+{
+  "name": "2d_gamers",
+  "version": "1.0.0",
+  "description": "First Release",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GabrielDiasFaria/2D_Gamers.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GabrielDiasFaria/2D_Gamers/issues"
+  },
+  "homepage": "https://github.com/GabrielDiasFaria/2D_Gamers#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
