@@ -34,11 +34,12 @@
                 e.preventDefault();
             }, false);
             
+            // Mouse Click
             e.addEventListener('mousedown', function(evt) {
-            var xVal = event.pageX - elemLeft,
-                yVal = event.pageY - elemTop,
-                xPixel = Math.floor(xVal / tamPixel),
-                yPixel = Math.floor(yVal / tamPixel)
+                var xVal = event.pageX - elemLeft,
+                    yVal = event.pageY - elemTop,
+                    xPixel = Math.floor(xVal / tamPixel),
+                    yPixel = Math.floor(yVal / tamPixel)
                 console.log(`Pixel X: ${xPixel}, Pixel Y: ${yPixel}`)    
                 console.log(event.button)   
             });
@@ -53,6 +54,22 @@
                 context.fillRect(3, 5, 1, 1);
                 context.fillRect(4, 1, 1, 1);
             }
+
+            function writeMessage(message) {
+                context.font = '1pt Calibri';
+                context.fillStyle = 'black';
+                context.fillText(message, 10, 25);
+            }
+
+            // Mouse move
+            e.addEventListener('mousemove', function(evt) {
+                var xVal = evt.pageX - elemLeft,
+                    yVal = evt.pageY - elemTop,
+                    xPixel = Math.floor(xVal / tamPixel),
+                    yPixel = Math.floor(yVal / tamPixel)
+                var message = 'Mouse position: ' + xPixel + ',' + yPixel;
+                console.log(message);
+            }, false);
          
         </script>
 </body>
