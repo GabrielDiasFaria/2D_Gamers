@@ -24,54 +24,117 @@
     </div>
 
     <script>
-            var e = document.getElementById('screen'),
-                elemLeft = e.offsetLeft,
-                elemTop = e.offsetTop,
-                context = e.getContext('2d'),
-                tamPixel = 26;
 
-            document.addEventListener("contextmenu", function(e){
-                e.preventDefault();
-            }, false);
-            
-            // Mouse Click
-            e.addEventListener('mousedown', function(evt) {
-                var xVal = event.pageX - elemLeft,
-                    yVal = event.pageY - elemTop,
-                    xPixel = Math.floor(xVal / tamPixel),
-                    yPixel = Math.floor(yVal / tamPixel)
-                console.log(`Pixel X: ${xPixel}, Pixel Y: ${yPixel}`)    
-                console.log(event.button)   
-            });
-
-            drawScreen()
-
-            function drawScreen(){
-                context.fillStyle = 'red';
-                context.fillRect(1, 1, 1, 1);
-                context.fillRect(2, 1, 1, 1);
-                context.fillRect(1, 3, 1, 1);
-                context.fillRect(3, 5, 1, 1);
-                context.fillRect(4, 1, 1, 1);
+        const layers = [
+            {layer0: [
+            {
+                id: "grass1",
+                positionX: 1,
+                positionY: 1,
+                color: "green"
+            },
+            {
+                id: "grass2",
+                positionX: 1,
+                positionY: 2,
+                color: "green"
+            },
+            {
+                id: "grass3",
+                positionX: 1,
+                positionY: 3,
+                color: "green"
+            },
+            {
+                id: "grass4",
+                positionX: 1,
+                positionY: 4,
+                color: "green"
+            },
+        ]}, {layer1: [
+            {
+                id: "player1",
+                positionX: 1,
+                positionY: 6,
+                color: "yellow"
+            },
+            {
+                id: "player2",
+                positionX: 2,
+                positionY: 6,
+                color: "yellow"
+            },
+            {
+                id: "player3",
+                positionX: 3,
+                positionY: 6,
+                color: "yellow"
+            },
+        ]}, {
+                layerDrawMouse: [
+                 {positionX: 1, positionY: 1}   
+                ]
             }
+        ]
 
-            function writeMessage(message) {
-                context.font = '1pt Calibri';
+        var e = document.getElementById('screen'),
+            elemLeft = e.offsetLeft,
+            elemTop = e.offsetTop,
+            context = e.getContext('2d'),
+            tamPixel = 26;
+
+        document.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+        }, false);
+        
+        // Mouse Click
+        e.addEventListener('mousedown', function(evt) {
+            var xVal = event.pageX - elemLeft,
+                yVal = event.pageY - elemTop,
+                xPixel = Math.floor(xVal / tamPixel),
+                yPixel = Math.floor(yVal / tamPixel)
+            console.log(`Pixel X: ${xPixel}, Pixel Y: ${yPixel}`)    
+            console.log(event.button)   
+        });
+
+        drawScreen()
+
+        function drawScreen(){
+
+            window.requestAnimationFrame(drawScreen);
+
+            context.clearRect(0,0,screen.width,screen.height); 
+
+            context.fillStyle = 'black';
+            for(layer0 in layers[0]["layer0"]){
+                let layer = layers[0]["layer0"][layer0]
                 context.fillStyle = 'black';
-                context.fillText(message, 10, 25);
+                context.fillRect(layer.positionX, layer.positionY, 1, 1);
+            }
+            for(layer1 in layers[1]["layer1"]){
+                let layer = layers[1]["layer1"][layer1]
+                context.fillStyle = 'black';
+                context.fillRect(layer.positionX, layer.positionY, 1, 1);
             }
 
-            // Mouse move
-            e.addEventListener('mousemove', function(evt) {
-                var xVal = evt.pageX - elemLeft,
-                    yVal = evt.pageY - elemTop,
-                    xPixel = Math.floor(xVal / tamPixel),
-                    yPixel = Math.floor(yVal / tamPixel)
-                var message = 'Mouse position: ' + xPixel + ',' + yPixel;
-                console.log(message);
-            }, false);
+            context.fillStyle = 'yellow';
+            context.fillRect(layers[2]["layerDrawMouse"][0].positionX, layers[2]["layerDrawMouse"][0].positionY, 1, 1);
+            
+        }
+
+        // Mouse move
+        e.addEventListener('mousemove', function(evt) {
+            var xVal = evt.pageX - elemLeft,
+                yVal = evt.pageY - elemTop,
+                xPixel = Math.floor(xVal / tamPixel),
+                yPixel = Math.floor(yVal / tamPixel)
+            var message = 'Mouse position: ' + xPixel + ',' + yPixel;
+            layers[2]["layerDrawMouse"][0].positionX = xPixel
+            layers[2]["layerDrawMouse"][0].positionY = yPixel
+            //console.log(message);
+        }, false);
          
-        </script>
+    </script>
 </body>
 
 </html>
