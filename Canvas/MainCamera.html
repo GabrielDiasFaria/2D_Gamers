@@ -1,0 +1,152 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>Meu primeiro Jogo</title>
+    
+        <style>
+            #screen{
+                border: 5px solid #CCC;
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
+                image-rendering: -moz-crisp-edges;
+                width: 550px;
+                height: 550px; 
+                left:30%;
+                top:10;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="rpgui-content">
+            <canvas id="screen" width="21" height="21" align="center">
+            </canvas>
+        </div>
+
+        <script type="module">
+
+            const state = {
+                players: {
+                    "player1": {
+                        positionX: 6,
+                        positionY: 6,
+                        color: "yellow"
+                    },
+                    "player2": {
+                        positionX: 5,
+                        positionY: 5,
+                        color: "black"
+                    },
+                    "player3": {
+                        positionX: 0,
+                        positionY: 0,
+                        color: "green"
+                    },
+                    "player4": {
+                        positionX: -1,
+                        positionY: 0,
+                        color: "blue"
+                    }
+                },
+                screen: {
+                    width: 21,
+                    height: 21
+                }
+            }
+
+            const screen = document.getElementById("screen"); 
+            const context = screen.getContext("2d"); // Contexto da Tela
+            context.fillStyle = 'white'
+            context.clearRect(0,0,21,21)
+            const currentPlayer = "player1"
+
+            renderScreen()
+
+            function renderScreen(){
+                window.requestAnimationFrame(renderScreen);
+
+                const playerMain = state.players[currentPlayer]
+
+                context.clearRect(0,0,screen.width,screen.height); 
+
+                for(const playerId in state.players){                    
+                    const player = state.players[playerId]
+                    context.fillStyle = player.color
+                    if(playerId == currentPlayer){
+                        let playerCurrent   = {
+                            positionX: 10,
+                            positionY: 10,
+                            color: player.color
+                        }
+                        context.fillRect(playerCurrent.positionX, playerCurrent.positionY, 1, 1)
+                        continue
+                    }
+
+                    if( player.positionX >= playerMain.positionX - 10 &&
+                        player.positionX <= playerMain.positionX + 10 &&
+                        player.positionY >= playerMain.positionY - 10 &&
+                        player.positionY <= playerMain.positionY + 10
+                        ){
+                        let eixoX = player.positionX - playerMain.positionX + 10
+                        let eixoY = player.positionY - playerMain.positionY + 10
+                        context.fillRect(eixoX, eixoY, 1, 1)
+                    }                    
+                }
+            }
+
+            document.addEventListener("keydown", handlerKeydown);
+            function handlerKeydown(event){
+
+                const keyPressed = event.key;
+
+                const command = {
+                    type: 'move-player',
+                    playerId: currentPlayer,
+                    keyPressed
+                }
+                movePlayer(command)
+            }
+
+            function movePlayer(command){                
+                
+                const acceptedMoves = {
+                    ArrowUp(player){ return player.positionY--;},
+                    ArrowDown(player){ return player.positionY++;},
+                    ArrowLeft(player){ return player.positionX--;},
+                    ArrowRight(player){ return player.positionX++;}
+                }
+
+                const player     = state.players[currentPlayer]                
+                const keyPressed = command.keyPressed
+                const moveFun = acceptedMoves[keyPressed];
+
+                let playerMove   = {
+                        positionX: player.positionX,
+                        positionY: player.positionY,
+                        color: "yellow"
+                    }
+                moveFun(playerMove)
+
+                if(moveFun && player && !checkColisionPlayer(playerMove)){
+                    moveFun(player)
+                }
+                console.log(`X: ${player.positionX}, Y: ${player.positionY}`)
+                return
+            }
+
+            function checkColisionPlayer(playerMove) {
+                let retorno = false
+                for(const playerId in state.players){                    
+                    const player = state.players[playerId]
+                    if(playerMove.positionX == player.positionX && playerMove.positionY == player.positionY) retorno = true
+                }
+                return retorno
+            }
+
+            
+                        
+        </script>
+    </body>
+
+</html>
