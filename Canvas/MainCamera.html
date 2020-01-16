@@ -29,7 +29,10 @@
             const state = {
                 screen: {
                     width: 21,
-                    height: 21
+                    height: 21,
+                    viewArea: 10,
+                    initX: 10,
+                    initY: 10
                 }
             }
 
@@ -44,37 +47,44 @@
                                 layer: "0"
                             },
                             {
-                                id: "grass2",
+                                id: "grass",
                                 positionX: 1,
                                 positionY: 2,
                                 color: "green",
                                 layer: "0"
                             },
                             {
-                                id: "grass3",
+                                id: "grass",
                                 positionX: 1,
                                 positionY: 3,
                                 color: "green",
                                 layer: "0"
                             },
                             {
-                                id: "grass4",
+                                id: "grass",
                                 positionX: 1,
                                 positionY: 4,
                                 color: "green",
                                 layer: "0"
                             },
                             {
-                                id: "grass5",
+                                id: "grass",
                                 positionX: 1,
                                 positionY: 5,
                                 color: "green",
                                 layer: "0"
                             },
                             {
-                                id: "grass6",
+                                id: "grass",
                                 positionX: 1,
                                 positionY: 6,
+                                color: "green",
+                                layer: "0"
+                            },
+                            {
+                                id: "grass",
+                                positionX: 3,
+                                positionY: 2,
                                 color: "green",
                                 layer: "0"
                             },
@@ -109,19 +119,19 @@
             const screen = document.getElementById("screen"); 
             const context = screen.getContext("2d"); // Contexto da Tela
             context.fillStyle = 'white'
-            context.clearRect(0,0,21,21)
-            const currentPlayer = {id: "player1"}
+            context.clearRect(0,0,state.screen.width,state.screen.height)
+            const mainPlayer = {id: "player1"}
 
 
             renderScreen()
 
-            function renderScreen(){
+            function renderScreen(){ // Camera focará no player do centro
                 window.requestAnimationFrame(renderScreen);
 
                 context.clearRect(0,0,screen.width,screen.height); 
 
-                const playerArr = layers[1].layer1.filter((player) => { // Filtra Player               
-                    return  player.id == currentPlayer.id;
+                const playerArr = layers[1].layer1.filter((player) => { // Filtra Player Main              
+                    return  player.id == mainPlayer.id;
                 })  
                 const player = playerArr[0]   
                                                 
@@ -130,31 +140,34 @@
                     let element = arrDrawElements[arrDrawElement]
                     context.fillStyle = element.color
                     context.globalAlpha = 1;
-                    let eixoX = element.positionX - player.positionX + 10
-                    let eixoY = element.positionY - player.positionY + 10
+                    let eixoX = element.positionX + (state.screen.initX - player.positionX)
+                    let eixoY = element.positionY + (state.screen.initY - player.positionY)
                     context.fillRect(eixoX, eixoY, 1, 1)
                 }
 
                 context.fillStyle = player.color
                 context.globalAlpha = 1;
-                context.fillRect(10, 10, 1, 1)
+                context.fillRect(state.screen.initX, state.screen.initY, 1, 1) // Desenha Player
             }
 
             function getElementsDraw(currentPlayer){
-                const maxX = 10 // X para esquerda e direita
-                const maxY = 10 // Y para esquerda e direita
+                const maxX = state.screen.viewArea // X para esquerda e direita
+                const maxY = state.screen.viewArea // Y para esquerda e direita
 
                 let x = y = 1
                 let sqmsPermited = []
-                let eixoX = 10 + (maxX * -1)
-                let eixoY = 10 + (maxY * -1)       
+                let eixoX = currentPlayer.positionX + (maxX * -1) // 1 -> 3
+                let eixoY = currentPlayer.positionY + (maxY * -1) // 0 -> -10
                 
                 do { // Eixo X             
                     do { // Eixo Y
                         context.fillStyle = "red"
                         context.globalAlpha = 0.2;
-                        //context.fillRect(eixoX, eixoY, 1, 1) 
-                        sqmsPermited.push({positionX: eixoX, positionY: eixoY})                       
+                        let finalX = eixoX + (state.screen.initX - currentPlayer.positionX)
+                        let finalY = eixoY + (state.screen.initY - currentPlayer.positionY)
+                        context.fillRect(finalX, finalY, 1, 1) // Desenhar Área de visualização
+                        sqmsPermited.push({positionX: finalX, positionY: finalY})       
+                        //console.log(`X: ${eixoX}, Y: ${eixoY}`)                
                         eixoY++
                         y++
                     } while (y <= (maxY * 2) + 1);
@@ -163,7 +176,7 @@
                     x++
                     if(y > (maxY * 2) + 1){
                          y = 1
-                         eixoY = 10 + (maxY * -1)   
+                         eixoY = currentPlayer.positionY + (maxY * -1)   
                     }
                          
                 } while (x <= (maxX * 2) + 1);
@@ -208,7 +221,7 @@
 
                 const command = {
                     type: 'move-player',
-                    playerId: currentPlayer,
+                    playerId: mainPlayer,
                     keyPressed
                 }
                 movePlayer(command)
@@ -224,7 +237,7 @@
                 }
 
                 const playerArr = layers[1].layer1.filter((player) => { // Filtra Player               
-                    return  player.id == currentPlayer.id;
+                    return  player.id == mainPlayer.id;
                 })  
                 const player = playerArr[0]       
                 const keyPressed = command.keyPressed
