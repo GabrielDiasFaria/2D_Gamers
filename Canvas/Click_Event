@@ -1,0 +1,60 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <style>
+        #screen {
+            border: 5px solid #CCC;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges;
+            width: 550px;
+            height: 550px;
+            left: 10;
+            top: 10;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="rpgui-content">
+        <canvas id="screen" width="21" height="21" align="center">
+        </canvas>
+    </div>
+
+    <script>
+            var e = document.getElementById('screen'),
+                elemLeft = e.offsetLeft,
+                elemTop = e.offsetTop,
+                context = e.getContext('2d'),
+                tamPixel = 26;
+
+            document.addEventListener("contextmenu", function(e){
+                e.preventDefault();
+            }, false);
+            
+            e.addEventListener('mousedown', function(evt) {
+            var xVal = event.pageX - elemLeft,
+                yVal = event.pageY - elemTop,
+                xPixel = Math.floor(xVal / tamPixel),
+                yPixel = Math.floor(yVal / tamPixel)
+                console.log(`Pixel X: ${xPixel}, Pixel Y: ${yPixel}`)    
+                console.log(event.button)   
+            });
+
+            drawScreen()
+
+            function drawScreen(){
+                context.fillStyle = 'red';
+                context.fillRect(1, 1, 1, 1);
+                context.fillRect(2, 1, 1, 1);
+                context.fillRect(1, 3, 1, 1);
+                context.fillRect(3, 5, 1, 1);
+                context.fillRect(4, 1, 1, 1);
+            }
+         
+        </script>
+</body>
+
+</html>
