@@ -1,98 +1,204 @@
 <html>
 
-    <head>
-        <meta charset="utf-8">
-        <title>Meu primeiro Jogo</title>
-    
-        <style>
-            #screen{
-                border: 5px solid #CCC;
-                image-rendering: pixelated;
-                image-rendering: crisp-edges;
-                image-rendering: -moz-crisp-edges;
-                width: 550px;
-                height: 550px; 
-                left:30%;
-                top:10;
-            }
-        </style>
-    </head>
+<head>
+    <meta charset="utf-8">
+    <title>Meu primeiro Jogo</title>
 
-    <body>
-        <div class="rpgui-content">
-            <canvas id="screen" width="21" height="21" align="center">
-            </canvas>
-        </div>
+    <style>
+        #screen {
+            border: 5px solid #CCC;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges;
+            width: 550px;
+            height: 550px;
+            left: 30%;
+            top: 10;
+        }
+    </style>
+</head>
 
-        <script type="module">
+<body>
+    <div class="rpgui-content">
+        <canvas id="screen" width="21" height="21" align="center">
+        </canvas>
+    </div>
+
+    <script>
 
             const state = {
-                players: {
-                    "player1": {
-                        positionX: 6,
-                        positionY: 6,
-                        color: "yellow"
-                    },
-                    "player2": {
-                        positionX: 5,
-                        positionY: 5,
-                        color: "black"
-                    },
-                    "player3": {
-                        positionX: 0,
-                        positionY: 0,
-                        color: "green"
-                    },
-                    "player4": {
-                        positionX: -1,
-                        positionY: 0,
-                        color: "blue"
-                    }
-                },
                 screen: {
                     width: 21,
                     height: 21
                 }
             }
 
+            const layers = [
+                {
+                    layer0: [ // Piso 1
+                            {
+                                id: "grass1",
+                                positionX: 1,
+                                positionY: 1,
+                                color: "green",
+                                layer: "0"
+                            },
+                            {
+                                id: "grass2",
+                                positionX: 1,
+                                positionY: 2,
+                                color: "green",
+                                layer: "0"
+                            },
+                            {
+                                id: "grass3",
+                                positionX: 1,
+                                positionY: 3,
+                                color: "green",
+                                layer: "0"
+                            },
+                            {
+                                id: "grass4",
+                                positionX: 1,
+                                positionY: 4,
+                                color: "green",
+                                layer: "0"
+                            },
+                            {
+                                id: "grass5",
+                                positionX: 1,
+                                positionY: 5,
+                                color: "green",
+                                layer: "0"
+                            },
+                            {
+                                id: "grass6",
+                                positionX: 1,
+                                positionY: 6,
+                                color: "green",
+                                layer: "0"
+                            },
+                    ]
+                }, {
+                    layer1: [ // Jogadores
+                        {
+                            id: "player1",
+                            positionX: 3,
+                            positionY: 2,
+                            color: "yellow",
+                            layer: "1"
+                        },
+                        {
+                            id: "player2",
+                            positionX: 2,
+                            positionY: 6,
+                            color: "black",
+                            layer: "1"
+                        },
+                        {
+                            id: "player3",
+                            positionX: 3,
+                            positionY: 6,
+                            color: "black",
+                            layer: "1"
+                        },
+                    ]
+                   }
+            ]
+
             const screen = document.getElementById("screen"); 
             const context = screen.getContext("2d"); // Contexto da Tela
             context.fillStyle = 'white'
             context.clearRect(0,0,21,21)
-            const currentPlayer = "player1"
+            const currentPlayer = {id: "player1"}
+
 
             renderScreen()
 
             function renderScreen(){
                 window.requestAnimationFrame(renderScreen);
 
-                const playerMain = state.players[currentPlayer]
-
                 context.clearRect(0,0,screen.width,screen.height); 
 
-                for(const playerId in state.players){                    
-                    const player = state.players[playerId]
-                    context.fillStyle = player.color
-                    if(playerId == currentPlayer){
-                        let playerCurrent   = {
-                            positionX: 10,
-                            positionY: 10,
-                            color: player.color
-                        }
-                        context.fillRect(playerCurrent.positionX, playerCurrent.positionY, 1, 1)
-                        continue
+                const playerArr = layers[1].layer1.filter((player) => { // Filtra Player               
+                    return  player.id == currentPlayer.id;
+                })  
+                const player = playerArr[0]   
+                                                
+                let arrDrawElements = getElementsDraw(player) // Elements Draw Layer 0
+                for(const arrDrawElement in arrDrawElements){ // Desenha na tela
+                    let element = arrDrawElements[arrDrawElement]
+                    context.fillStyle = element.color
+                    context.globalAlpha = 1;
+                    let eixoX = element.positionX - player.positionX + 10
+                    let eixoY = element.positionY - player.positionY + 10
+                    context.fillRect(eixoX, eixoY, 1, 1)
+                }
+
+                context.fillStyle = player.color
+                context.globalAlpha = 1;
+                context.fillRect(10, 10, 1, 1)
+            }
+
+            function getElementsDraw(currentPlayer){
+                const maxX = 10 // X para esquerda e direita
+                const maxY = 10 // Y para esquerda e direita
+
+                let x = y = 1
+                let sqmsPermited = []
+                let eixoX = 10 + (maxX * -1)
+                let eixoY = 10 + (maxY * -1)       
+                
+                do { // Eixo X             
+                    do { // Eixo Y
+                        context.fillStyle = "red"
+                        context.globalAlpha = 0.2;
+                        //context.fillRect(eixoX, eixoY, 1, 1) 
+                        sqmsPermited.push({positionX: eixoX, positionY: eixoY})                       
+                        eixoY++
+                        y++
+                    } while (y <= (maxY * 2) + 1);
+                    
+                    eixoX++
+                    x++
+                    if(y > (maxY * 2) + 1){
+                         y = 1
+                         eixoY = 10 + (maxY * -1)   
+                    }
+                         
+                } while (x <= (maxX * 2) + 1);
+
+                let layerDraw = []
+                let i = 1
+                do { // Pereenche Arr com valores em X e Y que serão desenhados pela posição do jogador indicado
+                    let elementsDrawLayer0 = layers[0].layer0.filter((layer0) => { // Filter quem pode aparecer na tela Layer Piso
+                        for(const sqmPermited in sqmsPermited) {
+                            if( layer0.positionX == sqmsPermited[sqmPermited].positionX && 
+                                layer0.positionY == sqmsPermited[sqmPermited].positionY &&
+                                layer0.id        != currentPlayer.id) 
+                                return layer0
+                        }                              
+                    }) 
+                    let elementsDrawLayer1 = layers[1].layer1.filter((player) => { // Filter quem pode aparecer na tela Layer Jogadores                  
+                        for(const sqmPermited in sqmsPermited) {
+                            if( player.positionX == sqmsPermited[sqmPermited].positionX && 
+                                player.positionY == sqmsPermited[sqmPermited].positionY &&
+                                player.id        != currentPlayer.id) 
+                                return player
+                        } 
+                    }) 
+                    
+                    for(const elementDrawLayer0 in elementsDrawLayer0){ // Adiciona os elementos ao Arr de Draw                        
+                        layerDraw.push(elementsDrawLayer0[elementDrawLayer0]) 
+                    } 
+
+                    for(const elementDrawLayer1 in elementsDrawLayer1){ // Adiciona os elementos ao Arr de Draw
+                        layerDraw.push(elementsDrawLayer1[elementDrawLayer1]) 
                     }
 
-                    if( player.positionX >= playerMain.positionX - 10 &&
-                        player.positionX <= playerMain.positionX + 10 &&
-                        player.positionY >= playerMain.positionY - 10 &&
-                        player.positionY <= playerMain.positionY + 10
-                        ){
-                        let eixoX = player.positionX - playerMain.positionX + 10
-                        let eixoY = player.positionY - playerMain.positionY + 10
-                        context.fillRect(eixoX, eixoY, 1, 1)
-                    }                    
-                }
+                    i++
+                } while (i <= maxX);
+                return layerDraw
             }
 
             document.addEventListener("keydown", handlerKeydown);
@@ -117,7 +223,10 @@
                     ArrowRight(player){ return player.positionX++;}
                 }
 
-                const player     = state.players[currentPlayer]                
+                const playerArr = layers[1].layer1.filter((player) => { // Filtra Player               
+                    return  player.id == currentPlayer.id;
+                })  
+                const player = playerArr[0]       
                 const keyPressed = command.keyPressed
                 const moveFun = acceptedMoves[keyPressed];
 
@@ -128,25 +237,13 @@
                     }
                 moveFun(playerMove)
 
-                if(moveFun && player && !checkColisionPlayer(playerMove)){
+                if(moveFun && player){
                     moveFun(player)
                 }
-                console.log(`X: ${player.positionX}, Y: ${player.positionY}`)
                 return
             }
-
-            function checkColisionPlayer(playerMove) {
-                let retorno = false
-                for(const playerId in state.players){                    
-                    const player = state.players[playerId]
-                    if(playerMove.positionX == player.positionX && playerMove.positionY == player.positionY) retorno = true
-                }
-                return retorno
-            }
-
-            
                         
         </script>
-    </body>
+</body>
 
 </html>
