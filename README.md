@@ -1,5 +1,5 @@
-# Motor MMO para Jogos
-Motor MMO para jogos.
+# Motor MMO
+Motor MMO
 
 Criado com o intuito de utilizar NodeJs e Socket.Io para montar um motor de MMO.
 
