@@ -1,0 +1,260 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <style>
+        #screen {
+            /* border: 5px solid #CCC; */
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges;
+            width: 99%;
+            height: 99%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="rpgui-content">
+        <!-- <canvas id="screen" align="center" align="center" style="margin-left: 25%">
+        </canvas> -->
+        <canvas id="screen">
+        </canvas>
+    </div>
+
+    <script>
+        // Cabem 49 quadrados de 6x6
+        // Tamanho: 300 x 150 (Se cada imagem cabe 6) = 49 na horizontal e 24 na vertical
+        // Meio é: 25 * imageSizeX / 
+        let sqrX = 49       // Total de Squares no X
+        let sqrY = 24       // Total de Squares no Y  
+        let imageSizeX = 6
+        let imageSizeY = 6
+        let centerX = ( sqrX / 2 ) * imageSizeX
+        let centerY = ( sqrY / 2 ) * imageSizeY
+        const mainPlayer = {id: "player1"}
+
+        const layers = [
+            {layer0: [
+            {
+                id: "grass1",
+                positionX: 0,
+                positionY: 0,
+                color: "green"
+            },
+            {
+                id: "grass2",
+                positionX: 6,
+                positionY: 0,
+                color: "green"
+            },
+            {
+                id: "grass3",
+                positionX: 12,
+                positionY: 0,
+                color: "green"
+            },
+            {
+               id: "grass4",
+               positionX: 294, // Ultimo Quadrado
+               positionY: 0,
+               color: "green"
+            },
+            {
+                id: "grass5",
+                positionX: 0, // 48
+                positionY: 150,
+                color: "green"
+            },
+        ]}, {layer1: [
+            {
+                id: "player1",
+                positionX: 60,
+                positionY: 60,
+                color: "yellow",
+                velocity: 2
+            },
+            {
+                id: "player2",
+                positionX: 12,
+                positionY: 12,
+                color: "black",
+                velocity: 6
+            },
+            {
+                id: "player3",
+                positionX: 18,
+                positionY: 18,
+                color: "black",
+                velocity: 6
+            },
+        ]}, {
+                mainCamera: {
+                    posX: 21,
+                    posY: 11,
+                    viewAreaX: 80,
+                    viewAreaY: 70,
+                }
+            }
+        ]
+
+        var e = document.getElementById('screen'),
+            elemLeft = e.offsetLeft,
+            elemTop = e.offsetTop,
+            context = e.getContext('2d'),
+            tamPixel = 20;
+
+        document.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+        }, false);
+        
+        document.addEventListener("keydown", handlerKeydown);
+        function handlerKeydown(event){
+
+            const keyPressed = event.key;
+
+            const command = {
+                type: 'move-player',
+                playerId: "player1",
+                keyPressed
+            }
+            movePlayer(command)
+        }
+
+        function movePlayer(command){ 
+            const acceptedMoves = {
+                ArrowUp(player){ return player.positionY -= player.velocity },
+                ArrowDown(player){ return player.positionY += player.velocity },
+                ArrowLeft(player){ return player.positionX -= player.velocity },
+                ArrowRight(player){ return player.positionX += player.velocity }
+            }
+
+            const playerArr = layers[1].layer1.filter((player) => { // Filtra Player Main              
+                return  player.id == mainPlayer.id;
+            })  
+            const player = playerArr[0]
+
+            const keyPressed = command.keyPressed
+            const moveFun = acceptedMoves[keyPressed];
+
+            if(moveFun && player){
+                moveFun(player)
+            }
+            return
+        }
+
+        function drawScreen(){
+            window.requestAnimationFrame(drawScreen);
+
+            context.clearRect(0,0,screen.width,screen.height); 
+
+            const playerArr = layers[1].layer1.filter((player) => { // Filtra Player Main              
+                return  player.id == mainPlayer.id;
+            })  
+            const player = playerArr[0]  
+
+            let arrDrawElements = getElementsDraw(player) // Elements Draw
+
+            for(const arrDrawElement in arrDrawElements){ // Desenha na tela
+                let element = arrDrawElements[arrDrawElement]
+                context.fillStyle = element.color
+                context.globalAlpha = 1;
+                let eixoX = element.positionX + (centerX - player.positionX)
+                let eixoY = element.positionY + (centerY - player.positionY)
+                context.fillRect(eixoX, eixoY, imageSizeX, imageSizeY)
+            }
+
+            context.fillStyle = player.color
+            context.globalAlpha = 1;
+            context.fillRect(centerX, centerY, imageSizeX, imageSizeY) // Desenha Player
+     
+        }
+
+        function getElementsDraw(currentPlayer){
+            const maxX = layers[2].mainCamera.viewAreaX // X para esquerda e direita
+            const maxY = layers[2].mainCamera.viewAreaY // Y para esquerda e direita
+
+            let x = y = 1
+            let sqmsPermited = []
+            let larguraPlayer = centerX + imageSizeX
+            let alturaPlayer  = centerY + imageSizeY
+
+            let limiteMenorPermitidoX = centerX - maxX                      // Cria Margem Menor
+            let limiteMaiorPermitidoX = larguraPlayer + maxX - imageSizeX   // Cria Margem Maior
+
+            let limiteMaiorPermitidoY = alturaPlayer + maxY  - imageSizeY   // Cria Margem Menor
+            let limiteMenorPermitidoY = centerY - maxY                      // Cria Margem Maior
+
+            let xLoop = ( limiteMaiorPermitidoX - limiteMenorPermitidoX ) / imageSizeX + 1
+            let yLoop = ( limiteMaiorPermitidoY - limiteMenorPermitidoY ) / imageSizeY + 1
+
+            // Monta diretrizes da Cam
+            do { // Eixo X             
+                do { // Eixo Y
+                    context.fillStyle = "red"
+                    context.globalAlpha = 0.1;
+                    let finalX = limiteMenorPermitidoX
+                    let finalY = limiteMaiorPermitidoY
+                    context.fillRect(finalX, finalY, imageSizeX, imageSizeY) // Desenhar Área de visualização
+                    limiteMaiorPermitidoY -= 6
+                    y++
+                } while (y <= yLoop);
+            limiteMenorPermitidoX += 6
+            x++
+            if(y > yLoop){
+                y = 1
+                limiteMaiorPermitidoY = alturaPlayer + maxY  - imageSizeY
+            }
+            } while (x <= xLoop);
+
+            // Adiciona o que vai desenhar
+            let layerDraw = []
+            let i = 1
+
+            limiteMenorPermitidoX = currentPlayer.positionX - maxX      // Cria Margem Menor
+            limiteMaiorPermitidoX = larguraPlayer + maxX - imageSizeX   // Cria Margem Maior
+            limiteMaiorPermitidoY = alturaPlayer + maxY  - imageSizeY   // Cria Margem Menor
+            limiteMenorPermitidoY = currentPlayer.positionY - maxY      // Cria Margem Maior
+
+            do { // Pereenche Arr com valores em X e Y que serão desenhados pela posição do jogador indicado
+
+                let elementsDrawLayer0 = layers[0].layer0.filter((layer0) => { // Filter quem pode aparecer na tela Layer Piso
+                    if( 
+                        layer0.positionX >= limiteMenorPermitidoX && 
+                        layer0.positionX <= limiteMaiorPermitidoX && 
+                        layer0.positionY >= limiteMenorPermitidoY &&
+                        layer0.positionY <= limiteMaiorPermitidoY &&
+                        layer0.id        != currentPlayer.id) 
+                            return layer0                        
+                }) 
+
+                let elementsDrawLayer1 = layers[1].layer1.filter((player) => { // Filter quem pode aparecer na tela Layer Jogadores                  
+                    if( 
+                        player.positionX >= limiteMenorPermitidoX && 
+                        player.positionX <= limiteMaiorPermitidoX && 
+                        player.positionY >= limiteMenorPermitidoY &&
+                        player.positionY <= limiteMaiorPermitidoY &&
+                        player.id        != currentPlayer.id) 
+                            return player  
+                }) 
+                
+                for(const elementDrawLayer0 in elementsDrawLayer0){ // Adiciona os elementos ao Arr de Draw                        
+                    layerDraw.push(elementsDrawLayer0[elementDrawLayer0]) 
+                } 
+
+                for(const elementDrawLayer1 in elementsDrawLayer1){ // Adiciona os elementos ao Arr de Draw
+                    layerDraw.push(elementsDrawLayer1[elementDrawLayer1]) 
+                }
+                
+
+                i++
+            } while (i <= maxX);
+            return layerDraw
+        }
+         
+        drawScreen()
+    </script>
+</body>
+
+</html>
