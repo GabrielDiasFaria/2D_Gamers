@@ -6,22 +6,17 @@
 
     <style>
         #screen {
-            left: 6;
-            top: 5;
-            width: 99%;
-            height: 98%;
+            /*left: 6;
+            top: 5; */
         }
     </style>
-    <link href="rpgui.min.css" rel="stylesheet" type="text/css">
+    <!-- <link href="rpgui.min.css" rel="stylesheet" type="text/css"> -->
 </head>
 
-<body>
-    <div class="rpgui-content rpgui-cursor-default">
-        <canvas class="rpgui-container framed rpgui-draggable" id="screen" width="992" height="576">
+<body style="background-color: white">
+    <div class="">
+        <canvas class="" id="screen" width="992" height="576">
         </canvas>
-        <ul id=contextMenu>
-            <li></li>
-        </ul>
     </div>
 
     <script>
@@ -36,6 +31,7 @@
                         y: 0,
                         clipX: 0,
                         clipY: 0,
+                        layer: 0
                     },
                     {
                         id: "Grass2",
@@ -44,6 +40,7 @@
                         y: 32,
                         clipX: 0,
                         clipY: 0,
+                        layer: 0
                     },
                     {
                         id: "Grass3",
@@ -52,6 +49,7 @@
                         y: 64,
                         clipX: 0,
                         clipY: 0,
+                        layer: 0
                     },
                     {
                         id: "Grass4",
@@ -60,10 +58,19 @@
                         y: 64,
                         clipX: 0,
                         clipY: 0,
+                        layer: 0
                     }
                 ],
                 layer1: [ // Base Objects
-
+                    // {
+                    //     id: "Weapon1",
+                    //     img: "imgUnknown/Sword.png",
+                    //     x: 64,
+                    //     y: 32,
+                    //     clipX: 0,
+                    //     clipY: 0,
+                    //     layer: 1
+                    // }
                 ],
                 layer2: [ // Players
                     {
@@ -79,12 +86,34 @@
                         health: 100,
                         healthMax: 100,
                         mana: 50,
-                        manaMax: 100
+                        manaMax: 100,
+                        layer: 2,
+                        rigidyBody: true
+                    },
+                    {
+                        id: "Monster1",
+                        img: "imgUnknown/Enemy.png",
+                        x: 64,
+                        y: 32,
+                        clipX: 0,
+                        clipY: 0,
+                        velocity: 32,
+                        currentClip: 1,
+                        currentAction: null,
+                        health: 100,
+                        healthMax: 100,
+                        mana: 50,
+                        manaMax: 100,
+                        layer: 2,
+                        rigidyBody: true
                     }
                 ],
                 layer3: [ // Topo Objetos
 
                 ]
+            },
+            selected: {
+
             },
             ui: {
                 lifeStart: {
@@ -150,11 +179,11 @@
                     fixedHeightAsset: 32,       // Tamanho Y fixo das Assets
                     fixedMaxClip: 3,            // Qtd Quadros por imagem do Asset
                     centerX: 15, // 31
-                    centerY: 9   // 18
+                    centerY: 8   // 18
                 },
                 cam: {
                     x: 10,
-                    y: 6
+                    y: 9
                 }
             }
         }
@@ -162,26 +191,48 @@
         // Variáveis Globais
         var cnv = document.querySelector('canvas')
         var ctx = cnv.getContext('2d')
+        var frameCount = 0
         document.addEventListener("keydown", handlerKeydown);
 
-        initGame()
-        function initGame() {
-
-        }
-
         function loop() {
+            frameCount++
             window.requestAnimationFrame(loop, cnv)
-            update()
             render()
+
+            // 25  - 1 sec
+            // 75  - 3 sec
+            // 100 - 4 sec
+            if (frameCount % 25 === 0) {
+                renderProjeteis()
+            }
+
+            if (frameCount % 75 === 0) {
+
+            }
         }
 
-        function update() {
+        function renderProjeteis() {
 
+            // let centerX = game.config.main.centerX * game.config.main.fixedWidthAsset
+            // let centerY = game.config.main.centerY * game.config.main.fixedHeightAsset
+            // var image = new Image()
+            // image.src = "imgUnknown/Sword.png";
+            // ctx.drawImage(
+            //     image,     // Imagem
+            //     0, // X Captura caso seja varios em um imagem só
+            //     0, // Y Captura caso seja varios em uma imagem só
+            //     game.config.main.fixedWidthAsset, // Tamanho da Imagem
+            //     game.config.main.fixedHeightAsset,// Tamanho da Imagem
+            //     centerX + 32,       // X Inicio da Imagem
+            //     centerY,            // Y Inicio da Imagem
+            //     game.config.main.fixedWidthAsset, // Tamanho da Imagem
+            //     game.config.main.fixedHeightAsset // Tamanho da Imagem
+            // )
         }
 
         function render() { // Renderiza todo o JSON do Game
             let mainPlayer = game.draw.layer2.filter((object) => {
-                return object.id = game.config.main.mainPlayerId
+                if (object.id == game.config.main.mainPlayerId) return object
             })
             var player = mainPlayer[0]
 
@@ -190,21 +241,29 @@
             // Draw
             let areaCam = drawCam(player)
             drawAssets(player, areaCam)
-            drawLifeUI(player)
-            drawManaUi(player)
-            drawInventario(player)
+            //drawLifeUI(player)
+            //drawManaUi(player)
+            //drawInventario(player)
         }
 
-        cnv.onclick = function (e) {
+        cnv.addEventListener('mousedown', getClick)
+
+        function getClick(e) {
+            button = e.button
+            // 0 - Left
+            // 1 - Center
+            // 2 - Right 
             eventX = e.clientX
             eventY = e.clientY
             console.log(`X: ${eventX}, Y: ${eventY}`)
-            console.log(identfyAsset(eventX, eventY))
+            let arrObjects = identfyAsset(eventX, eventY)
+            console.log(arrObjects)
+            console.log(arrObjects[arrObjects.length - 1])
         }
 
         function identfyAsset(x, y) {
             let mainPlayer = game.draw.layer2.filter((object) => {
-                return object.id = game.config.main.mainPlayerId
+                if (object.id == game.config.main.mainPlayerId) return object
             })
             var player = mainPlayer[0]
 
@@ -244,7 +303,7 @@
             maxY = (game.config.cam.y * 2 + 1) * game.config.main.fixedHeightAsset
 
             ctx.fillStyle = "black"
-            ctx.globalAlpha = 0.25;
+            ctx.globalAlpha = 0.10;
             ctx.fillRect(
                 minX,
                 minY,
@@ -433,7 +492,7 @@
 
         function movePlayer(command) {
             let mainPlayer = game.draw.layer2.filter((object) => {
-                return object.id = game.config.main.mainPlayerId
+                if (object.id == game.config.main.mainPlayerId) return object
             })
             var player = mainPlayer[0]
 
@@ -475,10 +534,67 @@
                 player.currentClip = 1
             }
 
-            if (moveFun && player) {
+            if (moveFun && player && !checkColision(player, keyPressed)) {
                 moveFun(player)
             }
             return
+        }
+
+        function checkColision(player, movement) {
+            var retorno = false
+            let areaCam = drawCam(player)
+            let objetosAoRedor = []
+            for (var layerId in game.draw) {
+                var layer = game.draw[layerId]
+                let list = layer.filter((object) => {
+                    if (
+                        object.id != game.config.main.mainPlayerId &&
+                        object.x >= player.x - game.config.main.fixedWidthAsset &&
+                        object.x <= player.x + game.config.main.fixedWidthAsset &&
+                        object.y >= player.y - game.config.main.fixedHeightAsset &&
+                        object.y <= player.y + game.config.main.fixedHeightAsset
+                    ) {
+                        objetosAoRedor.push(object)
+                        return object
+                    }
+
+                })
+
+            }
+
+            // Deverá analisar para o futuro movimento
+            for (var index in objetosAoRedor) {
+                var objeto = objetosAoRedor[index]
+                switch (movement) {
+                    case "ArrowUp":
+                        if (objeto.y == player.y - 32 &&
+                            objeto.rigidyBody &&
+                            objeto.x == player.x)
+                            retorno = true
+                        break;
+                    case "ArrowDown":
+                        if (objeto.y == player.y + 32 &&
+                            objeto.rigidyBody &&
+                            objeto.x == player.x)
+                            retorno = true
+                        break;
+                    case "ArrowLeft":
+                        if (objeto.x == player.x - 32 &&
+                            objeto.rigidyBody &&
+                            objeto.y == player.y)
+                            retorno = true
+                        break;
+                    case "ArrowRight":
+                        if (objeto.x == player.x + 32 &&
+                            objeto.rigidyBody &&
+                            objeto.y == player.y)
+                            retorno = true
+                        break;
+                }
+            }
+
+            // rigidyBody
+            return retorno
         }
 
         document.addEventListener("contextmenu", function (e) {
