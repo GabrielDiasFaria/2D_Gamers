@@ -3,19 +3,21 @@
 <head>
     <meta charset="utf-8">
     <title>Meu primeiro Jogo</title>
-    <meta name="generator" content="Geany 1.27" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
     <style>
         #screen {
-            border: 5px solid #CCC;
+            /*left: 6;
+            top: 5; */
         }
     </style>
+    <!-- <link href="rpgui.min.css" rel="stylesheet" type="text/css"> -->
 </head>
 
-<body>
-    <canvas id="screen" width="992" height="576" align="center">
-    </canvas>
+<body style="background-color: white">
+    <div class="">
+        <canvas class="" id="screen" width="992" height="576">
+        </canvas>
+    </div>
 
     <script>
 
@@ -24,44 +26,56 @@
                 layer0: [ // Piso
                     {
                         id: "Grass1",
-                        img: "Grass.png",
+                        img: "imgUnknown/Grass.png",
                         x: 0,
                         y: 0,
                         clipX: 0,
                         clipY: 0,
+                        layer: 0
                     },
                     {
                         id: "Grass2",
-                        img: "Grass.png",
+                        img: "imgUnknown/Grass.png",
                         x: 0,
                         y: 32,
                         clipX: 0,
                         clipY: 0,
+                        layer: 0
                     },
                     {
                         id: "Grass3",
-                        img: "Grass.png",
+                        img: "imgUnknown/Grass.png",
                         x: 0,
                         y: 64,
                         clipX: 0,
                         clipY: 0,
+                        layer: 0
                     },
                     {
                         id: "Grass4",
-                        img: "Grass.png",
+                        img: "imgUnknown/Grass.png",
                         x: 32,
                         y: 64,
                         clipX: 0,
                         clipY: 0,
+                        layer: 0
                     }
                 ],
                 layer1: [ // Base Objects
-
+                    // {
+                    //     id: "Weapon1",
+                    //     img: "imgUnknown/Sword.png",
+                    //     x: 64,
+                    //     y: 32,
+                    //     clipX: 0,
+                    //     clipY: 0,
+                    //     layer: 1
+                    // }
                 ],
                 layer2: [ // Players
                     {
                         id: "Player1",
-                        img: "Male.png",
+                        img: "imgUnknown/Male.png",
                         x: 32,
                         y: 64,
                         clipX: 0,
@@ -72,57 +86,86 @@
                         health: 100,
                         healthMax: 100,
                         mana: 50,
-                        manaMax: 100
+                        manaMax: 100,
+                        layer: 2,
+                        rigidyBody: true
+                    },
+                    {
+                        id: "Monster1",
+                        img: "imgUnknown/Enemy.png",
+                        x: 64,
+                        y: 32,
+                        clipX: 0,
+                        clipY: 0,
+                        velocity: 32,
+                        currentClip: 1,
+                        currentAction: null,
+                        health: 100,
+                        healthMax: 100,
+                        mana: 50,
+                        manaMax: 100,
+                        layer: 2,
+                        rigidyBody: true
                     }
                 ],
                 layer3: [ // Topo Objetos
 
                 ]
             },
+            selected: {
+
+            },
             ui: {
                 lifeStart: {
-                    img: "lifeStart.png",
-                    x: 3,
+                    img: "imgUnknown/lifeStart.png",
+                    x: 160,
                     y: 0,
                     width: 50,
                     height: 50
                 },
                 lifeEnd: {
-                    img: "lifeEnd.png",
-                    x: 73,
+                    img: "imgUnknown/lifeEnd.png",
+                    x: 230,
                     y: 0,
                     width: 50,
                     height: 50
                 },
                 lifeProgress: {
-                    img: "lifeProgress.png",
-                    x: 15,
+                    img: "imgUnknown/lifeProgress.png",
+                    x: 172,
                     y: 2,
                     width: 150,
                     height: 150,
                     max: 1450
                 },
                 manaStart: {
-                    img: "lifeStart.png",
-                    x: 3,
+                    img: "imgUnknown/lifeStart.png",
+                    x: 160,
                     y: 23,
                     width: 50,
                     height: 50
                 },
                 manaEnd: {
-                    img: "lifeEnd.png",
-                    x: 73,
+                    img: "imgUnknown/lifeEnd.png",
+                    x: 230,
                     y: 23,
                     width: 50,
                     height: 50
                 },
                 manaProgress: {
-                    img: "manaProgress.png",
-                    x: 15,
+                    img: "imgUnknown/manaProgress.png",
+                    x: 172,
                     y: 25,
                     width: 150,
                     height: 150,
                     max: 1450
+                },
+                inventario: {
+                    img: "imgUnknown/box2.png",
+                    x: 2,
+                    y: 96,
+                    width: 150,
+                    height: 300
                 }
             },
             config: {
@@ -136,11 +179,11 @@
                     fixedHeightAsset: 32,       // Tamanho Y fixo das Assets
                     fixedMaxClip: 3,            // Qtd Quadros por imagem do Asset
                     centerX: 15, // 31
-                    centerY: 9   // 18
+                    centerY: 8   // 18
                 },
                 cam: {
-                    x: 11,
-                    y: 6
+                    x: 10,
+                    y: 9
                 }
             }
         }
@@ -148,26 +191,48 @@
         // Variáveis Globais
         var cnv = document.querySelector('canvas')
         var ctx = cnv.getContext('2d')
+        var frameCount = 0
         document.addEventListener("keydown", handlerKeydown);
 
-        initGame()
-        function initGame() {
-
-        }
-
         function loop() {
+            frameCount++
             window.requestAnimationFrame(loop, cnv)
-            update()
             render()
+
+            // 25  - 1 sec
+            // 75  - 3 sec
+            // 100 - 4 sec
+            if (frameCount % 25 === 0) {
+                renderProjeteis()
+            }
+
+            if (frameCount % 75 === 0) {
+
+            }
         }
 
-        function update() {
+        function renderProjeteis() {
 
+            // let centerX = game.config.main.centerX * game.config.main.fixedWidthAsset
+            // let centerY = game.config.main.centerY * game.config.main.fixedHeightAsset
+            // var image = new Image()
+            // image.src = "imgUnknown/Sword.png";
+            // ctx.drawImage(
+            //     image,     // Imagem
+            //     0, // X Captura caso seja varios em um imagem só
+            //     0, // Y Captura caso seja varios em uma imagem só
+            //     game.config.main.fixedWidthAsset, // Tamanho da Imagem
+            //     game.config.main.fixedHeightAsset,// Tamanho da Imagem
+            //     centerX + 32,       // X Inicio da Imagem
+            //     centerY,            // Y Inicio da Imagem
+            //     game.config.main.fixedWidthAsset, // Tamanho da Imagem
+            //     game.config.main.fixedHeightAsset // Tamanho da Imagem
+            // )
         }
 
         function render() { // Renderiza todo o JSON do Game
             let mainPlayer = game.draw.layer2.filter((object) => {
-                return object.id = game.config.main.mainPlayerId
+                if (object.id == game.config.main.mainPlayerId) return object
             })
             var player = mainPlayer[0]
 
@@ -176,20 +241,29 @@
             // Draw
             let areaCam = drawCam(player)
             drawAssets(player, areaCam)
-            drawLifeUI(player)
-            drawManaUi(player)
+            //drawLifeUI(player)
+            //drawManaUi(player)
+            //drawInventario(player)
         }
 
-        cnv.onclick = function (e) {
+        cnv.addEventListener('mousedown', getClick)
+
+        function getClick(e) {
+            button = e.button
+            // 0 - Left
+            // 1 - Center
+            // 2 - Right 
             eventX = e.clientX
             eventY = e.clientY
             console.log(`X: ${eventX}, Y: ${eventY}`)
-            console.log(identfyAsset(eventX, eventY))
+            let arrObjects = identfyAsset(eventX, eventY)
+            console.log(arrObjects)
+            console.log(arrObjects[arrObjects.length - 1])
         }
 
         function identfyAsset(x, y) {
             let mainPlayer = game.draw.layer2.filter((object) => {
-                return object.id = game.config.main.mainPlayerId
+                if (object.id == game.config.main.mainPlayerId) return object
             })
             var player = mainPlayer[0]
 
@@ -229,7 +303,7 @@
             maxY = (game.config.cam.y * 2 + 1) * game.config.main.fixedHeightAsset
 
             ctx.fillStyle = "black"
-            ctx.globalAlpha = 0.25;
+            ctx.globalAlpha = 0.10;
             ctx.fillRect(
                 minX,
                 minY,
@@ -342,6 +416,22 @@
             )
         }
 
+        function drawInventario(player) {
+            var uiInventario = new Image()
+            uiInventario.src = game.ui.inventario.img;
+            ctx.drawImage(
+                uiInventario,     // Imagem
+                0, // X Captura caso seja varios em um imagem só
+                0, // Y Captura caso seja varios em uma imagem só
+                game.ui.inventario.width, // Tamanho da Imagem
+                game.ui.inventario.height,// Tamanho da Imagem
+                game.ui.inventario.x,     // X Inicio da Imagem
+                game.ui.inventario.y,     // Y Inicio da Imagem
+                game.ui.inventario.width, // Tamanho da Imagem
+                game.ui.inventario.height // Tamanho da Imagem
+            )
+        }
+
         function drawLifeUI(player) {
 
             var uiLifeStart = new Image()
@@ -402,7 +492,7 @@
 
         function movePlayer(command) {
             let mainPlayer = game.draw.layer2.filter((object) => {
-                return object.id = game.config.main.mainPlayerId
+                if (object.id == game.config.main.mainPlayerId) return object
             })
             var player = mainPlayer[0]
 
@@ -444,11 +534,72 @@
                 player.currentClip = 1
             }
 
-            if (moveFun && player) {
+            if (moveFun && player && !checkColision(player, keyPressed)) {
                 moveFun(player)
             }
             return
         }
+
+        function checkColision(player, movement) {
+            var retorno = false
+            let areaCam = drawCam(player)
+            let objetosAoRedor = []
+            for (var layerId in game.draw) {
+                var layer = game.draw[layerId]
+                let list = layer.filter((object) => {
+                    if (
+                        object.id != game.config.main.mainPlayerId &&
+                        object.x >= player.x - game.config.main.fixedWidthAsset &&
+                        object.x <= player.x + game.config.main.fixedWidthAsset &&
+                        object.y >= player.y - game.config.main.fixedHeightAsset &&
+                        object.y <= player.y + game.config.main.fixedHeightAsset
+                    ) {
+                        objetosAoRedor.push(object)
+                        return object
+                    }
+
+                })
+
+            }
+
+            // Deverá analisar para o futuro movimento
+            for (var index in objetosAoRedor) {
+                var objeto = objetosAoRedor[index]
+                switch (movement) {
+                    case "ArrowUp":
+                        if (objeto.y == player.y - 32 &&
+                            objeto.rigidyBody &&
+                            objeto.x == player.x)
+                            retorno = true
+                        break;
+                    case "ArrowDown":
+                        if (objeto.y == player.y + 32 &&
+                            objeto.rigidyBody &&
+                            objeto.x == player.x)
+                            retorno = true
+                        break;
+                    case "ArrowLeft":
+                        if (objeto.x == player.x - 32 &&
+                            objeto.rigidyBody &&
+                            objeto.y == player.y)
+                            retorno = true
+                        break;
+                    case "ArrowRight":
+                        if (objeto.x == player.x + 32 &&
+                            objeto.rigidyBody &&
+                            objeto.y == player.y)
+                            retorno = true
+                        break;
+                }
+            }
+
+            // rigidyBody
+            return retorno
+        }
+
+        document.addEventListener("contextmenu", function (e) {
+            e.preventDefault();
+        }, false);
 
         loop()
     </script>
