@@ -1,0 +1,389 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Meu primeiro Jogo</title>
+    <meta name="generator" content="Geany 1.27" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <style>
+        #screen {
+            border: 5px solid #CCC;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="screen" width="480" height="480">
+    </canvas>
+
+    <script>
+
+        const game = {
+            draw: {
+                layer0: [ // Piso
+                    {
+                        id: "Grass1",
+                        img: "Grass.png",
+                        x: 0,
+                        y: 0,
+                        clipX: 0,
+                        clipY: 0,
+                    },
+                    {
+                        id: "Grass2",
+                        img: "Grass.png",
+                        x: 0,
+                        y: 32,
+                        clipX: 0,
+                        clipY: 0,
+                    },
+                    {
+                        id: "Grass2",
+                        img: "Grass.png",
+                        x: 0,
+                        y: 64,
+                        clipX: 0,
+                        clipY: 0,
+                    },
+                    {
+                        id: "Grass2",
+                        img: "Grass.png",
+                        x: 32,
+                        y: 64,
+                        clipX: 0,
+                        clipY: 0,
+                    }
+                ],
+                layer1: [ // Base Objects
+
+                ],
+                layer2: [ // Players
+                    {
+                        id: "Player1",
+                        img: "Male.png",
+                        x: 32,
+                        y: 64,
+                        clipX: 0,
+                        clipY: 0,
+                        velocity: 32,
+                        currentClip: 1,
+                        currentAction: null,
+                        health: 50,
+                        healthMax: 100,
+                        mana: 50,
+                        manaMax: 100
+                    }
+                ],
+                layer3: [ // Topo Objetos
+
+                ]
+            },
+            ui: {
+                lifeStart: {
+                    img: "lifeStart.png",
+                    x: 0,
+                    y: 0,
+                    width: 50,
+                    height: 50
+                },
+                lifeEnd: {
+                    img: "lifeEnd.png",
+                    x: 70,
+                    y: 0,
+                    width: 50,
+                    height: 50
+                },
+                lifeProgress: {
+                    img: "lifeProgress.png",
+                    x: 12,
+                    y: 2,
+                    width: 150,
+                    height: 150,
+                    max: 1450
+                },
+                manaStart: {
+                    img: "lifeStart.png",
+                    x: 0,
+                    y: 20,
+                    width: 50,
+                    height: 50
+                },
+                manaEnd: {
+                    img: "lifeEnd.png",
+                    x: 70,
+                    y: 20,
+                    width: 50,
+                    height: 50
+                },
+                manaProgress: {
+                    img: "manaProgress.png",
+                    x: 12,
+                    y: 22,
+                    width: 150,
+                    height: 150,
+                    max: 1450
+                }
+            },
+            config: {
+                screen: {
+                    width: 500,
+                    height: 500
+                },
+                main: {
+                    mainPlayerId: "Player1",    // Id do Personagem Main
+                    fixedWidthAsset: 32,        // Tamanho X fixo das Assets
+                    fixedHeightAsset: 32,       // Tamanho Y fixo das Assets
+                    fixedMaxClip: 3,            // Qtd Quadros por imagem do Asset
+                    centerX: 7,
+                    centerY: 7
+                }
+            }
+        }
+
+        // Variáveis Globais
+        var cnv = document.querySelector('canvas')
+        var ctx = cnv.getContext('2d')
+        document.addEventListener("keydown", handlerKeydown);
+
+        initGame()
+        function initGame() {
+
+        }
+
+        function loop() {
+            window.requestAnimationFrame(loop, cnv)
+            update()
+            render()
+        }
+
+        function update() {
+
+        }
+
+        function render() { // Renderiza todo o JSON do Game
+            let mainPlayer = game.draw.layer2.filter((object) => {
+                return object.id = game.config.main.mainPlayerId
+            })
+            var player = mainPlayer[0]
+
+            ctx.clearRect(0, 0, game.config.screen.width, game.config.screen.height);
+
+            // Draw Game
+            for (var layerId in game.draw) {
+                var layer = game.draw[layerId]
+                for (var assetId in layer) {
+                    // Assets Draw
+                    var spr = layer[assetId]
+
+                    if (spr.id != player.id) {
+                        var image = new Image()
+                        image.src = spr.img;
+                        let centerX = (spr.x - player.x) + (game.config.main.centerX * game.config.main.fixedWidthAsset)
+                        let centerY = (spr.y - player.y) + (game.config.main.centerY * game.config.main.fixedHeightAsset)
+                        ctx.drawImage(
+                            image,     // Imagem
+                            spr.clipX, // X Captura caso seja varios em um imagem só
+                            spr.clipY, // Y Captura caso seja varios em uma imagem só
+                            game.config.main.fixedWidthAsset, // Tamanho da Imagem
+                            game.config.main.fixedHeightAsset,// Tamanho da Imagem
+                            centerX,     // X Inicio da Imagem
+                            centerY,     // Y Inicio da Imagem
+                            game.config.main.fixedWidthAsset, // Tamanho da Imagem
+                            game.config.main.fixedHeightAsset // Tamanho da Imagem
+                        )
+                    } else {
+                        var image = new Image()
+                        image.src = spr.img;
+                        let centerX = game.config.main.centerX * game.config.main.fixedWidthAsset
+                        let centerY = game.config.main.centerY * game.config.main.fixedHeightAsset
+                        ctx.drawImage(
+                            image,     // Imagem
+                            spr.clipX, // X Captura caso seja varios em um imagem só
+                            spr.clipY, // Y Captura caso seja varios em uma imagem só
+                            game.config.main.fixedWidthAsset, // Tamanho da Imagem
+                            game.config.main.fixedHeightAsset,// Tamanho da Imagem
+                            centerX,     // X Inicio da Imagem
+                            centerY,     // Y Inicio da Imagem
+                            game.config.main.fixedWidthAsset, // Tamanho da Imagem
+                            game.config.main.fixedHeightAsset // Tamanho da Imagem
+                        )
+                    }
+
+
+                }
+            }
+
+            // Draw UI
+            drawLifeUI()
+            drawEgergyUi()
+
+        }
+
+        function drawEgergyUi() {
+            let mainPlayer = game.draw.layer2.filter((object) => {
+                return object.id = game.config.main.mainPlayerId
+            })
+            var player = mainPlayer[0]
+
+            var uiManaStart = new Image()
+            uiManaStart.src = game.ui.manaStart.img;
+            ctx.drawImage(
+                uiManaStart,     // Imagem
+                0, // X Captura caso seja varios em um imagem só
+                0, // Y Captura caso seja varios em uma imagem só
+                game.ui.manaStart.width, // Tamanho da Imagem
+                game.ui.manaStart.height,// Tamanho da Imagem
+                game.ui.manaStart.x,     // X Inicio da Imagem
+                game.ui.manaStart.y,     // Y Inicio da Imagem
+                game.ui.manaStart.width, // Tamanho da Imagem
+                game.ui.manaStart.height // Tamanho da Imagem
+            )
+
+            var uiManaEnd = new Image()
+            uiManaEnd.src = game.ui.manaEnd.img;
+            ctx.drawImage(
+                uiManaEnd,     // Imagem
+                0, // X Captura caso seja varios em um imagem só
+                0, // Y Captura caso seja varios em uma imagem só
+                game.ui.manaEnd.width, // Tamanho da Imagem
+                game.ui.manaEnd.height,// Tamanho da Imagem
+                game.ui.manaEnd.x,     // X Inicio da Imagem
+                game.ui.manaEnd.y,     // Y Inicio da Imagem
+                game.ui.manaEnd.width, // Tamanho da Imagem
+                game.ui.manaEnd.height // Tamanho da Imagem
+            )
+
+            var uiManaProgress = new Image()
+            uiManaProgress.src = game.ui.manaProgress.img;
+            let progressWidth = ((player.health * 100) / player.healthMax) / 100 * game.ui.manaProgress.max
+            ctx.drawImage(
+                uiManaProgress,     // Imagem
+                0, // X Captura caso seja varios em um imagem só
+                0, // Y Captura caso seja varios em uma imagem só
+                game.ui.manaProgress.width, // Tamanho da Imagem
+                game.ui.manaProgress.height,// Tamanho da Imagem
+                game.ui.manaProgress.x,     // X Inicio da Imagem
+                game.ui.manaProgress.y,     // Y Inicio da Imagem
+                progressWidth, // Tamanho da Imagem
+                370 // Tamanho da Imagem
+            )
+        }
+
+        function drawLifeUI() {
+            let mainPlayer = game.draw.layer2.filter((object) => {
+                return object.id = game.config.main.mainPlayerId
+            })
+            var player = mainPlayer[0]
+
+            var uiLifeStart = new Image()
+            uiLifeStart.src = game.ui.lifeStart.img;
+            ctx.drawImage(
+                uiLifeStart,     // Imagem
+                0, // X Captura caso seja varios em um imagem só
+                0, // Y Captura caso seja varios em uma imagem só
+                game.ui.lifeStart.width, // Tamanho da Imagem
+                game.ui.lifeStart.height,// Tamanho da Imagem
+                game.ui.lifeStart.x,     // X Inicio da Imagem
+                game.ui.lifeStart.y,     // Y Inicio da Imagem
+                game.ui.lifeStart.width, // Tamanho da Imagem
+                game.ui.lifeStart.height // Tamanho da Imagem
+            )
+
+            var uiLifeEnd = new Image()
+            uiLifeEnd.src = game.ui.lifeEnd.img;
+            ctx.drawImage(
+                uiLifeEnd,     // Imagem
+                0, // X Captura caso seja varios em um imagem só
+                0, // Y Captura caso seja varios em uma imagem só
+                game.ui.lifeEnd.width, // Tamanho da Imagem
+                game.ui.lifeEnd.height,// Tamanho da Imagem
+                game.ui.lifeEnd.x,     // X Inicio da Imagem
+                game.ui.lifeEnd.y,     // Y Inicio da Imagem
+                game.ui.lifeEnd.width, // Tamanho da Imagem
+                game.ui.lifeEnd.height // Tamanho da Imagem
+            )
+
+            var uiLifeProgress = new Image()
+            uiLifeProgress.src = game.ui.lifeProgress.img;
+            let progressWidth = ((player.health * 100) / player.healthMax) / 100 * game.ui.lifeProgress.max
+            ctx.drawImage(
+                uiLifeProgress,     // Imagem
+                0, // X Captura caso seja varios em um imagem só
+                0, // Y Captura caso seja varios em uma imagem só
+                game.ui.lifeProgress.width, // Tamanho da Imagem
+                game.ui.lifeProgress.height,// Tamanho da Imagem
+                game.ui.lifeProgress.x,     // X Inicio da Imagem
+                game.ui.lifeProgress.y,     // Y Inicio da Imagem
+                progressWidth, // Tamanho da Imagem
+                370 // Tamanho da Imagem
+            )
+        }
+
+        function handlerKeydown(event) {
+
+            const keyPressed = event.key;
+
+            const command = {
+                type: 'move-player',
+                playerId: "player1",
+                keyPressed
+            }
+            movePlayer(command)
+        }
+
+        function movePlayer(command) {
+            let mainPlayer = game.draw.layer2.filter((object) => {
+                return object.id = game.config.main.mainPlayerId
+            })
+            var player = mainPlayer[0]
+
+            const acceptedMoves = {
+                ArrowUp(player) {
+                    player.currentAction = "ArrowUp"
+                    player.y -= player.velocity
+                    player.clipY = 3 * game.config.main.fixedWidthAsset
+                    return
+                },
+                ArrowDown(player) {
+                    player.currentAction = "ArrowDown"
+                    player.y += player.velocity
+                    player.clipY = 0
+                    return
+                },
+                ArrowLeft(player) {
+                    player.currentAction = "ArrowLeft"
+                    player.x -= player.velocity
+                    player.clipY = 1 * game.config.main.fixedWidthAsset
+                    return
+                },
+                ArrowRight(player) {
+                    player.currentAction = "ArrowRight"
+                    player.x += player.velocity
+                    player.clipY = 2 * game.config.main.fixedWidthAsset
+                    return
+                }
+            }
+
+            const keyPressed = command.keyPressed
+            const moveFun = acceptedMoves[keyPressed];
+
+            // Clip Image
+            if (player.currentClip < game.config.main.fixedMaxClip) {
+                player.clipX = player.currentClip * game.config.main.fixedWidthAsset
+                player.currentClip++
+            } else {
+                player.currentClip = 1
+            }
+
+            if (moveFun && player) {
+                moveFun(player)
+            }
+            return
+        }
+
+        loop()
+    </script>
+</body>
+
+</html>
