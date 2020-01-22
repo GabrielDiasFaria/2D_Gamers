@@ -1,0 +1,9 @@
+cd C:\Users\ABE000719\3D Objects\ClientSocket\SocketClient\src\Main
+
+set path=%path%;C:\dev\Java\jdk1.7.0_51\bin
+
+javac Main.java Recebedor.java
+
+cd..
+
+java -classpath . Main.Main
