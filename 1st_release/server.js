@@ -6,6 +6,7 @@
 // npm install nodemon
 // npx serve => servidor temporário para rodar projeto
 // nvm install node => Instala versão mais nova para os imports
+// node --experimental-modules my-app.mjs
 
 import express from 'express'
 import http from 'http'
