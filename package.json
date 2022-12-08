@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/GabrielDiasFaria/2D_Gamers#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.18.2"
   }
 }
